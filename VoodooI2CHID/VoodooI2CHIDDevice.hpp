@@ -16,8 +16,8 @@
 #include <IOKit/IOInterruptEventSource.h>
 #include <IOKit/IOTimerEventSource.h>
 #include <IOKit/hid/IOHIDDevice.h>
-#include "../../../Dependencies/helpers.hpp"
 #include <IOKit/hid/IOHIDElement.h>
+#include "../../../Dependencies/helpers.hpp"
 
 #define INTERRUPT_SIMULATOR_TIMEOUT 5
 
@@ -148,47 +148,49 @@ class VoodooI2CHIDDevice : public IOHIDDevice {
      * @return *kIOReturnSuccess* on success, or an error return otherwise.
      */
 
-    virtual IOReturn newReportDescriptor(IOMemoryDescriptor** descriptor) const override;
+    IOReturn newReportDescriptor(IOMemoryDescriptor** descriptor) const override;
 
     /* Returns a number object that describes the vendor ID of the HID device.
      *
      * @return A number object. The caller must decrement the retain count on the object returned.
      */
 
-    virtual OSNumber* newVendorIDNumber() const override;
+    OSNumber* newVendorIDNumber() const override;
 
     /* Returns a number object that describes the product ID of the HID device.
      *
      * @return A number object. The caller must decrement the retain count on the object returned.
      */
 
-    virtual OSNumber* newProductIDNumber() const override;
+    OSNumber* newProductIDNumber() const override;
 
     /* Returns a number object that describes the version number of the HID device.
      *
      * @return A number object. The caller must decrement the retain count on the object returned.
      */
 
-    virtual OSNumber* newVersionNumber() const override;
+    OSNumber* newVersionNumber() const override;
 
     /* Returns a string object that describes the transport layer used by the HID device.
      *
      * @return A string object. The caller must decrement the retain count on the object returned.
      */
 
-    virtual OSString* newTransportString() const override;
+    OSString* newTransportString() const override;
 
     /* Returns a string object that describes the manufacturer of the HID device.
      *
      * @return A string object. The caller must decrement the retain count on the object returned.
      */
 
-    virtual OSString* newManufacturerString() const override;
+    OSString* newManufacturerString() const override;
 
  protected:
     bool awake;
     bool read_in_progress;
     IOWorkLoop* work_loop;
+    
+    IOReturn resetHIDDeviceGated();
 
     /* Issues an I2C-HID reset command.
      *
@@ -225,6 +227,7 @@ class VoodooI2CHIDDevice : public IOHIDDevice {
      */
 
     IOReturn setReport(IOMemoryDescriptor* report, IOHIDReportType reportType, IOOptionBits options);
+
  private:
     IOACPIPlatformDevice* acpi_device;
     VoodooI2CDeviceNub* api;
@@ -242,6 +245,8 @@ class VoodooI2CHIDDevice : public IOHIDDevice {
      */
 
     void getInputReport();
+    
+    IOWorkLoop* getWorkLoop();
 
     /*
     * This function is called when the I2C-HID device asserts its interrupt line.
